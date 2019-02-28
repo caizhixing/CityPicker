@@ -1,7 +1,6 @@
 package com.zaaach.citypicker.adapter.decoration;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -97,6 +96,11 @@ public class SectionItemDecoration extends RecyclerView.ItemDecoration {
                 mTextPaint);
     }
 
+    /**
+     * onDrawOver在{@link RecyclerView#draw(Canvas)}中被调用
+     * ItemDecoration#onDraw先执行再执行childview的绘制最后执行ItemDecoration#onDrawOver的方法
+     * 吸附在rcy顶部
+     * */
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         int pos = ((LinearLayoutManager) (parent.getLayoutManager())).findFirstVisibleItemPosition();
@@ -108,6 +112,11 @@ public class SectionItemDecoration extends RecyclerView.ItemDecoration {
         boolean flag = false;
         if ((pos + 1) < mData.size()) {
             if (null != section && !section.equals(mData.get(pos + 1).getSection())) {
+                /**
+                 * child.getHeight() + child.getTop() < mSectionHeight
+                 * 这种判断 首先考虑不等号两边什么情况下相等
+                 * 相等的情况发生在SectionItemDecoration顶部刚接触到onDrawOver绘制的底部
+                 * */
                 if (child.getHeight() + child.getTop() < mSectionHeight) {
                     c.save();
                     flag = true;
